@@ -1,0 +1,65 @@
+#include <igloo/igloo.h>
+#include <cstdlib>
+#include <algorithm>
+#include <iostream>
+
+using namespace igloo;
+
+std::string exec(std::string command) {
+   char buffer[128];
+   std::string result = "";
+
+   // Open pipe to file
+   FILE* pipe = popen((command + " 2>&1").c_str(), "r");
+   if (!pipe) {
+      return "popen failed!";
+   }
+
+   // read till end of process:
+   while (!feof(pipe)) {
+
+      // use buffer to read and add to result
+      if (fgets(buffer, 128, pipe) != NULL)
+         result += buffer;
+   }
+
+   pclose(pipe);
+   result.erase(result.find_last_not_of(" \t\n\r\f\v") + 1);
+   return result;
+}
+
+std::string compile_run(std::string filename){
+    std::string compile = exec("g++ -o temp " + filename);
+    std::string output = compile;
+    if (compile == ""){
+        output = exec("./temp");
+        system("rm -f temp");
+    }
+
+    return output;
+}
+
+std::string compile_run(std::string filename, std::string input){
+    std::string compile = exec("g++ -o temp " + filename);
+    std::string output = compile;
+    if (compile == ""){
+        output = exec("echo \"" + input + "\" | ./temp");
+        system("rm -f temp");
+    }
+
+    return output;
+}
+
+Context(TestIO){
+    Spec(GreetAngelo){
+        Assert::That(compile_run("main.cpp", "Angelo\n37"), Equals("Hello, Angelo, it's good to be 37 years old."));
+    }
+
+    Spec(GreetAvery){
+        Assert::That(compile_run("main.cpp", "Avery\n24"), Equals("Hello, Avery, it's good to be 24 years old."));
+    }
+};
+
+int main(){
+    TestRunner::RunAllTests();
+}

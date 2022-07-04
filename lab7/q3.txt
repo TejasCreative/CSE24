@@ -1,0 +1,3 @@
+R\fTW(DZFO#F)\dWUgL%[P"FPFbJbX
+
+I first tried using the regular decode function but I got random giberish I could not read. After using the coredump function I got the memory for the entire message and found that it was really interesting, "collumn 2" was random numbers between 1 and 9(maybe 10), and 4 was all above 200. 3 was all between 70 and 100, and 1 was all over the place. After trying the first collumn I found that it was also giberish, so I tried to code it such that it would only look at ones that corresponded to a character which gave me the sequence in line 1. I suspect there may be a math system where the ascii character is mutliplied by a factor in the 2nd collumn but I do not have the time to try before the due time.
